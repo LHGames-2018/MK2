@@ -9,7 +9,7 @@ namespace LHGames.Bot
         internal IPlayer PlayerInfo { get; set; }
         private int _currentDirection = 1;
 
-        private MapAnalyzedUnit[,] mapAnalyzeds = new MapAnalyzedUnit[20,20];
+        private MapAnalyzedUnit[,] mapAnalyzeds = new MapAnalyzedUnit[20, 20];
 
         private Point housePosition;
 
@@ -33,12 +33,12 @@ namespace LHGames.Bot
         /// <param name="map">The gamemap.</param>
         /// <param name="visiblePlayers">Players that are visible to your bot.</param>
         /// <returns>The action you wish to execute.</returns>
-		
+
         internal string ExecuteTurn(Map map, IEnumerable<IPlayer> visiblePlayers)
         {
             // TODO: Implement your AI here.
-			
-			
+
+
             if (map.GetTileAt(PlayerInfo.Position.X + _currentDirection, PlayerInfo.Position.Y) == TileContent.Wall)
             {
                 _currentDirection *= -1;
@@ -48,10 +48,53 @@ namespace LHGames.Bot
             searchMap.findRessources();
 
             var data = StorageHelper.Read<TestClass>("Test");
-            Console.WriteLine(data?.Test);
-            return AIHelper.CreateMoveAction(new Point(0, 1));
+            // Console.WriteLine(data?.Test);
+            return returnMoveAction(searchMap.findRessources(),PlayerInfo);
+        }
+        public Point calculateTileDistance(List<Point> ressourcePositions, IPlayer playerInfor)
+        {
+            var xDistance = ressourcePositions[0].X - playerInfor.Position.X;
+            var yDistance = ressourcePositions[0].Y - playerInfor.Position.Y;
+            return new Point(xDistance, yDistance);
         }
 
+
+        public string returnMoveAction(List<Point> ressourcePositions, IPlayer playerInfor)
+        {
+            var distance = calculateTileDistance(ressourcePositions, playerInfor);
+            if (playerInfor.CarriedResources == playerInfor.CarryingCapacity)
+            {
+                if (housePosition.X != 0)
+                {
+                    return housePosition.X > 0 ? AIHelper.CreateMoveAction(new Point(1, 0)) : AIHelper.CreateMoveAction(new Point(-1, 0));
+                }
+                else if (housePosition.Y != 0)
+                {
+                    return housePosition.Y > 0 ? AIHelper.CreateMoveAction(new Point(0, 1)) : AIHelper.CreateMoveAction(new Point(0, -1));
+                }
+                return "";
+            }
+            if (distance.X != 0)
+            {
+                return distance.X > 0 ? AIHelper.CreateMoveAction(new Point(1, 0)) : AIHelper.CreateMoveAction(new Point(-1, 0));
+            }
+            if ((int)Point.DistanceSquared(ressourcePositions[0], PlayerInfo.Position) == 1)
+            {
+                return AIHelper.CreateCollectAction(new Point(0, -1));
+            }
+            else if (distance.Y != 0)
+            {
+                return distance.Y > 0 ? AIHelper.CreateMoveAction(new Point(0, 1)) : AIHelper.CreateMoveAction(new Point(0, -1));
+            }
+            return "";
+        }
+
+        // public Point ressourceDirection(IPlayer playerInfor)
+        // {
+        //     Map map;
+        //     map.GetTileAt()
+        //     return new Point();
+        // }
         /// <summary>
         /// Gets called after ExecuteTurn.
         /// </summary>
