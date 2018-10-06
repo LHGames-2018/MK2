@@ -42,6 +42,7 @@ namespace LHGames.Bot
             }
 
             analyseMap(map);
+            findRessources();
 
             var data = StorageHelper.Read<TestClass>("Test");
             Console.WriteLine(data?.Test);
@@ -123,6 +124,11 @@ namespace LHGames.Bot
                     }
                 }
             }
+            /*/
+            foreach(Point point in listResources){
+                Console.WriteLine(point.X + " " + point.Y);
+            }
+            */
             return listResources;
         }
 
