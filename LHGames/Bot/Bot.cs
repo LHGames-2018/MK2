@@ -53,8 +53,8 @@ namespace LHGames.Bot
         }
         public Point calculateTileDistance(List<Point> ressourcePositions, IPlayer playerInfor)
         {
-            var xDistance = ressourcePositions[1].X - playerInfor.Position.X;
-            var yDistance = ressourcePositions[1].Y - playerInfor.Position.Y;
+            var xDistance = ressourcePositions[0].X - playerInfor.Position.X;
+            var yDistance = ressourcePositions[0].Y - playerInfor.Position.Y;
             return new Point(xDistance, yDistance);
         }
 
@@ -81,7 +81,7 @@ namespace LHGames.Bot
             var distance = calculateTileDistance(ressourcePositions, playerInfor);
             var houseDistance = calculateHouseDistance(searchMap.housePosition, playerInfor);
 
-            if (playerInfor.CarriedResources == playerInfor.CarryingCapacity)
+            if (playerInfor.CarriedResources == 500)//playerInfor.CarryingCapacity)
             {
                 return moveToHouse(houseDistance, playerInfor);
             }
@@ -95,9 +95,9 @@ namespace LHGames.Bot
             {
                 return distance.X > 0 ? AIHelper.CreateMoveAction(new Point(1, 0)) : AIHelper.CreateMoveAction(new Point(-1, 0));
             }
-            if ((int)Point.DistanceSquared(ressourcePositions[1], PlayerInfo.Position) == 1)
+            if ((int)Point.DistanceSquared(ressourcePositions[0], PlayerInfo.Position) == 1)
             {
-                return AIHelper.CreateCollectAction(miningPosition(ressourcePositions[1], PlayerInfo.Position));
+                return AIHelper.CreateCollectAction(miningPosition(ressourcePositions[0], PlayerInfo.Position));
             }
             else if (distance.Y != 0)
             {
