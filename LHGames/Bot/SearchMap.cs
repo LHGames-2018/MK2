@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using LHGames.Helper;
+using System.Linq;
 
 namespace LHGames.Bot{
 
@@ -64,9 +65,9 @@ namespace LHGames.Bot{
         internal void printMap(){
             for(int i = 0; i < 20; i++){
                 for(int j = 0; j < 20; j++){
-                    Console.Write("Position: " + mapAnalyzeds[i,j].positionX + "," + mapAnalyzeds[i,j].positionY + " " + mapAnalyzeds[i,j].tileContent + "||");
+                    //Console.Write("Position: " + mapAnalyzeds[i,j].positionX + "," + mapAnalyzeds[i,j].positionY + " " + mapAnalyzeds[i,j].tileContent + "||");
                 }
-                Console.WriteLine();
+                //Console.WriteLine();
             }
         }
 
@@ -91,10 +92,47 @@ namespace LHGames.Bot{
             foreach(Point point in listResources){
                 Console.WriteLine(point.X + " " + point.Y);
             }
-
+            /*/
             //Console.WriteLine("House Position: " + housePosition.X +","+housePosition.Y);
-            */
+            listResources = sortResource(listResources);
+
             return listResources;
+        }
+
+        internal List<Point> sortResource(List<Point> listResources){
+            List<Point> newListResource = new List<Point>();
+
+            double distanceMin = 9999;
+            foreach(Point point in listResources){
+
+                Point playerInfoPoint = new Point(PlayerInfo.Position.X, PlayerInfo.Position.Y);
+
+                double distance = Point.Distance(playerInfoPoint, point);
+
+                Console.WriteLine("Distance: " + distance + "||" + "For: " + point.X +","+point.Y);
+
+                Console.WriteLine("Count "+newListResource.Count);
+                if(newListResource.Count == 0){
+                    newListResource.Add(point);
+                }
+                Console.WriteLine("Count22 "+newListResource.Count);
+
+                if(distance < distanceMin && newListResource.Count > 0){
+                    newListResource.Add(point);
+                    Swap(newListResource, 0, newListResource.Count - 1);
+                    distanceMin = distance;
+                }
+            }
+
+            Console.WriteLine("Position: "+newListResource[0].X + "," + newListResource[0].Y);
+            
+            return newListResource;
+        }
+
+        private void Swap( List<Point> list, int index1, int index2){
+            Point temp = list[index1];
+            list[index1] = list[index2];
+            list[index2] = temp;
         }
 
     }
