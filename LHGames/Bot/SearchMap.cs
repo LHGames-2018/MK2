@@ -8,16 +8,16 @@ namespace LHGames.Bot{
     public class SearchMap{
 
         internal IPlayer PlayerInfo;
-
+        public Point housePosition;
         internal SearchMap(IPlayer playerInfo, MapAnalyzedUnit[,] mapAnalyzeds, Point point){
             this.mapAnalyzeds = mapAnalyzeds;
-            this.housePosition = point;
+            housePosition = point;
             this.PlayerInfo = playerInfo;
         }
 
         private MapAnalyzedUnit[,] mapAnalyzeds;
 
-        private Point housePosition;
+    
         
         internal void analyseMap(Map map){
 
@@ -70,7 +70,6 @@ namespace LHGames.Bot{
                 //Console.WriteLine();
             }
         }
-
         internal List<Point> findRessources(){
 
             List<Point> listResources = new List<Point>();

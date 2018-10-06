@@ -39,75 +39,65 @@ namespace LHGames.Bot
             // TODO: Implement your AI here.
 
 
-            if (map.GetTileAt(PlayerInfo.Position.X + _currentDirection, PlayerInfo.Position.Y) == TileContent.Wall)
-            {
-                _currentDirection *= -1;
-            }
+            // if (map.GetTileAt(PlayerInfo.Position.X + _currentDirection, PlayerInfo.Position.Y) == TileContent.Wall)
+            // {
+            //     _currentDirection *= -1;
+            // }
 
             searchMap.analyseMap(map);
             searchMap.findRessources();
 
             var data = StorageHelper.Read<TestClass>("Test");
             // Console.WriteLine(data?.Test);
-            return returnMoveAction(searchMap.findRessources(),PlayerInfo);
+            return returnMoveAction(searchMap.findRessources(), PlayerInfo);
         }
         public Point calculateTileDistance(List<Point> ressourcePositions, IPlayer playerInfor)
         {
-            var xDistance = ressourcePositions[0].X - playerInfor.Position.X;
-            var yDistance = ressourcePositions[0].Y - playerInfor.Position.Y;
+            var xDistance = ressourcePositions[1].X - playerInfor.Position.X;
+            var yDistance = ressourcePositions[1].Y - playerInfor.Position.Y;
             return new Point(xDistance, yDistance);
         }
 
+        public Point calculateHouseDistance(Point housePosition, IPlayer playerInfor)
+        {
+            var xDistance = housePosition.X - playerInfor.Position.X;
+            var yDistance = housePosition.Y - playerInfor.Position.Y;
+            return new Point(xDistance, yDistance);
+        }
 
-
-        public int randomize(){
-
-                Random rand = new Random();
-                int number = rand.Next(0,2);
-                if(number == 1){
-                    return 1;
-                }
-                else
-                    return 0;
+        public int randomize()
+        {
+            Random rand = new Random();
+            int number = rand.Next(0, 2);
+            if (number == 1)
+            {
+                return 1;
+            }
+            else
+                return 0;
         }
         public string returnMoveAction(List<Point> ressourcePositions, IPlayer playerInfor)
         {
             var distance = calculateTileDistance(ressourcePositions, playerInfor);
+            var houseDistance = calculateHouseDistance(searchMap.housePosition, playerInfor);
+
             if (playerInfor.CarriedResources == playerInfor.CarryingCapacity)
             {
- 
-                
-                if (housePosition.X != 0)
-                {
-                    if (ressourcePositions[0].X - PlayerInfo.Position.X == 1){
-
-                        Random rand = new Random();
-                        int number = rand.Next(0,1);
-                        return AIHelper.CreateMoveAction(new Point(0,randomize()));
-                    }
-                    return housePosition.X > 0 ? AIHelper.CreateMoveAction(new Point(1, 0)) : AIHelper.CreateMoveAction(new Point(-1, 0));
-                }
-                else if (housePosition.Y != 0)
-                {
-                    if (ressourcePositions[0].Y - PlayerInfo.Position.Y == 1){
-                        Random rand = new Random();
-                        int number = rand.Next(0,1);
-                        return AIHelper.CreateMoveAction(new Point(randomize(),0));
-
-                    }                    
-                    return housePosition.Y > 0 ? AIHelper.CreateMoveAction(new Point(0, 1)) : AIHelper.CreateMoveAction(new Point(0, -1));
-                }
-                return "";
-
+                return moveToHouse(houseDistance, playerInfor);
             }
+            return moveToRessource(distance, ressourcePositions);
+
+        }
+
+        private string moveToRessource(Point distance, List<Point> ressourcePositions)
+        {
             if (distance.X != 0)
             {
                 return distance.X > 0 ? AIHelper.CreateMoveAction(new Point(1, 0)) : AIHelper.CreateMoveAction(new Point(-1, 0));
             }
-            if ((int)Point.DistanceSquared(ressourcePositions[0], PlayerInfo.Position) == 1)
+            if ((int)Point.DistanceSquared(ressourcePositions[1], PlayerInfo.Position) == 1)
             {
-
-                return AIHelper.CreateCollectAction(miningPosition(ressourcePositions[0], PlayerInfo.Position));
+                return AIHelper.CreateCollectAction(miningPosition(ressourcePositions[1], PlayerInfo.Position));
             }
             else if (distance.Y != 0)
             {
@@ -116,16 +106,43 @@ namespace LHGames.Bot
             return "";
         }
 
-        private Point miningPosition(Point resourcePosition, Point playerPosition)
-        {        
-            int x = resourcePosition.X - playerPosition.X;
-            int y = resourcePosition.Y - playerPosition.Y;
+        private string moveToHouse(Point houseDistance, IPlayer playerInfor)
+        {
 
-          return new Point(x,y);
+            if (houseDistance.X != 0)
+            {
+                // if (ressourcePositions[0].X - PlayerInfo.Position.X == 1){
+
+                //     Random rand = new Random();
+                //     int number = rand.Next(0,1);
+                //     return AIHelper.CreateMoveAction(new Point(0,randomize()));
+                // }
+                return houseDistance.X > 0 ? AIHelper.CreateMoveAction(new Point(1, 0)) : AIHelper.CreateMoveAction(new Point(-1, 0));
+            }
+            else if (houseDistance.Y != 0)
+            {
+                // if (ressourcePositions[0].Y - PlayerInfo.Position.Y == 1){
+                //     Random rand = new Random();
+                //     int number = rand.Next(0,1);
+                //     return AIHelper.CreateMoveAction(new Point(randomize(),0));
+
+                // }                    
+                return houseDistance.Y > 0 ? AIHelper.CreateMoveAction(new Point(0, 1)) : AIHelper.CreateMoveAction(new Point(0, -1));
+            }
+            return AIHelper.CreateMoveAction(new Point(0, 1));
 
         }
 
-        
+        private Point miningPosition(Point resourcePosition, Point playerPosition)
+        {
+            int x = resourcePosition.X - playerPosition.X;
+            int y = resourcePosition.Y - playerPosition.Y;
+
+            return new Point(x, y);
+
+        }
+
+
 
         // public Point ressourceDirection(IPlayer playerInfor)
         // {
