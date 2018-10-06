@@ -93,14 +93,19 @@ namespace LHGames.Bot
         {
             if (distance.X != 0)
             {
+                if (Math.Abs((int)Point.DistanceSquared(ressourcePositions[0], PlayerInfo.Position)) == 1)
+                {
+                    return AIHelper.CreateCollectAction(miningPosition(ressourcePositions[0], PlayerInfo.Position));
+                }
                 return distance.X > 0 ? AIHelper.CreateMoveAction(new Point(1, 0)) : AIHelper.CreateMoveAction(new Point(-1, 0));
             }
-            if ((int)Point.DistanceSquared(ressourcePositions[0], PlayerInfo.Position) == 1)
-            {
-                return AIHelper.CreateCollectAction(miningPosition(ressourcePositions[0], PlayerInfo.Position));
-            }
+
             else if (distance.Y != 0)
             {
+                if (Math.Abs((int)Point.DistanceSquared(ressourcePositions[0], PlayerInfo.Position)) == 1)
+                {
+                    return AIHelper.CreateCollectAction(miningPosition(ressourcePositions[0], PlayerInfo.Position));
+                }
                 return distance.Y > 0 ? AIHelper.CreateMoveAction(new Point(0, 1)) : AIHelper.CreateMoveAction(new Point(0, -1));
             }
             return "";
