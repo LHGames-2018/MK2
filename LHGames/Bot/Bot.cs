@@ -80,7 +80,7 @@ namespace LHGames.Bot
         {
             var distance = calculateTileDistance(ressourcePositions, playerInfor);
             var houseDistance = calculateHouseDistance(searchMap.housePosition, playerInfor);
-
+            Console.WriteLine("Capacity: "+playerInfor.CarriedResources);
             if (playerInfor.CarriedResources == 500)//playerInfor.CarryingCapacity)
             {
                 return moveToHouse(houseDistance, playerInfor);
@@ -91,6 +91,8 @@ namespace LHGames.Bot
 
         private string moveToRessource(Point distance, List<Point> ressourcePositions)
         {
+
+            
             if (distance.X != 0)
             {
                 return distance.X > 0 ? AIHelper.CreateMoveAction(new Point(1, 0)) : AIHelper.CreateMoveAction(new Point(-1, 0));

@@ -44,7 +44,7 @@ namespace LHGames.Bot{
                     mapAnalyzeds[counterX,counterY].tileContent = map.GetTileAt(x,y);
 
                     counterY++;
-                    Console.Write("Position: " + x + ", " + y + " " + map.GetTileAt(x,y) + " ||");
+                    //Console.Write("Position: " + x + ", " + y + " " + map.GetTileAt(x,y) + " ||");
                 }
                 counterY = 0;
                 counterX++;
@@ -108,13 +108,13 @@ namespace LHGames.Bot{
 
                 double distance = Point.Distance(playerInfoPoint, point);
 
-                Console.WriteLine("Distance: " + distance + "||" + "For: " + point.X +","+point.Y);
+                //Console.WriteLine("Distance: " + distance + "||" + "For: " + point.X +","+point.Y);
 
-                Console.WriteLine("Count "+newListResource.Count);
+                //Console.WriteLine("Count "+newListResource.Count);
                 if(newListResource.Count == 0){
                     newListResource.Add(point);
                 }
-                Console.WriteLine("Count22 "+newListResource.Count);
+                //Console.WriteLine("Count22 "+newListResource.Count);
 
                 if(distance < distanceMin && newListResource.Count > 0){
                     newListResource.Add(point);
