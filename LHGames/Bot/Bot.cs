@@ -27,7 +27,20 @@ namespace LHGames.Bot
         /// <param name="visiblePlayers">Players that are visible to your bot.</param>
         /// <returns>The action you wish to execute.</returns>
 		
-		internal int gotoHouse(){
+		internal int gotoHouseX(){
+			
+			if(pass > 0){
+				pass = pass - 1;
+				return 1;
+				
+			}
+			
+			else{
+				return 0;
+			}
+		}
+		
+		internal int gotoHouseY(){
 			
 			if(pass > 0){
 				pass = pass - 1;
@@ -53,7 +66,7 @@ namespace LHGames.Bot
             Console.WriteLine(data?.Test);
 			
 			
-            return AIHelper.CreateMoveAction(new Point(gotoHouse(), 0));
+            return AIHelper.CreateMoveAction(new Point(gotoHouseX(), 0));
 		    //return AIHelper.CreateCollectAction(new Point(0, 1));
         }
 
