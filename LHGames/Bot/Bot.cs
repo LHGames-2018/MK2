@@ -66,7 +66,7 @@ namespace LHGames.Bot
             Console.WriteLine(data?.Test);
 			
 			
-            return AIHelper.CreateMoveAction(new Point(gotoHouseX(), 0));
+            return AIHelper.CreateMoveAction(new Point(0, -gotoHouseY()));
 		    //return AIHelper.CreateCollectAction(new Point(0, 1));
         }
 
