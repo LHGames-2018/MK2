@@ -59,20 +59,46 @@ namespace LHGames.Bot
         }
 
 
+
+        public int randomize(){
+
+                Random rand = new Random();
+                int number = rand.Next(0,2);
+                if(number == 1){
+                    return 1;
+                }
+                else
+                    return 0;
+        }
         public string returnMoveAction(List<Point> ressourcePositions, IPlayer playerInfor)
         {
             var distance = calculateTileDistance(ressourcePositions, playerInfor);
             if (playerInfor.CarriedResources == playerInfor.CarryingCapacity)
             {
+ 
+                
                 if (housePosition.X != 0)
                 {
+                    if (ressourcePositions[0].X - PlayerInfo.Position.X == 1){
+
+                        Random rand = new Random();
+                        int number = rand.Next(0,1);
+                        return AIHelper.CreateMoveAction(new Point(0,randomize()));
+                    }
                     return housePosition.X > 0 ? AIHelper.CreateMoveAction(new Point(1, 0)) : AIHelper.CreateMoveAction(new Point(-1, 0));
                 }
                 else if (housePosition.Y != 0)
                 {
+                    if (ressourcePositions[0].Y - PlayerInfo.Position.Y == 1){
+                        Random rand = new Random();
+                        int number = rand.Next(0,1);
+                        return AIHelper.CreateMoveAction(new Point(randomize(),0));
+
+                    }                    
                     return housePosition.Y > 0 ? AIHelper.CreateMoveAction(new Point(0, 1)) : AIHelper.CreateMoveAction(new Point(0, -1));
                 }
                 return "";
+
             }
             if (distance.X != 0)
             {
@@ -80,7 +106,8 @@ namespace LHGames.Bot
             }
             if ((int)Point.DistanceSquared(ressourcePositions[0], PlayerInfo.Position) == 1)
             {
-                return AIHelper.CreateCollectAction(new Point(0, -1));
+
+                return AIHelper.CreateCollectAction(miningPosition(ressourcePositions[0], PlayerInfo.Position));
             }
             else if (distance.Y != 0)
             {
@@ -88,6 +115,17 @@ namespace LHGames.Bot
             }
             return "";
         }
+
+        private Point miningPosition(Point resourcePosition, Point playerPosition)
+        {        
+            int x = resourcePosition.X - playerPosition.X;
+            int y = resourcePosition.Y - playerPosition.Y;
+
+          return new Point(x,y);
+
+        }
+
+        
 
         // public Point ressourceDirection(IPlayer playerInfor)
         // {
