@@ -8,14 +8,11 @@ namespace LHGames.Bot
     {
         internal IPlayer PlayerInfo { get; set; }
         private int _currentDirection = 1;
-<<<<<<< HEAD
 
         private MapAnalyzedUnit[,] mapAnalyzeds = new MapAnalyzedUnit[20,20];
 
-        //mapAnalyzeds[0]
-=======
-		int pass = 3;
->>>>>>> 05ed020bcf06114471a93722d96119cbf867828a
+        private Point housePosition;
+
         internal Bot() { }
 
         /// <summary>
@@ -33,19 +30,6 @@ namespace LHGames.Bot
         /// <param name="map">The gamemap.</param>
         /// <param name="visiblePlayers">Players that are visible to your bot.</param>
         /// <returns>The action you wish to execute.</returns>
-		
-		internal int gotoHouseX(){
-			
-			if(pass > 0){
-				pass = pass - 1;
-				return 1;
-				
-			}
-			
-			else{
-				return 0;
-			}
-		}
 		
         internal string ExecuteTurn(Map map, IEnumerable<IPlayer> visiblePlayers)
         {
@@ -123,7 +107,24 @@ namespace LHGames.Bot
             }
         }
 
+        internal List<Point> findRessources(){
 
+            List<Point> listResources = new List<Point>();
+
+            for(int i = 0; i < 20; i++){
+                for(int j = 0; j < 20; j++){
+                    
+                    if(mapAnalyzeds[i,j].tileContent == TileContent.Resource){
+                        listResources.Add(new Point(mapAnalyzeds[i,j].positionX,mapAnalyzeds[i,j].positionY));
+                    }
+
+                    if(mapAnalyzeds[i,j].tileContent == TileContent.House && housePosition == null){
+                        housePosition = new Point(mapAnalyzeds[i,j].positionX,mapAnalyzeds[i,j].positionY);
+                    }
+                }
+            }
+            return listResources;
+        }
 
     }
 }
