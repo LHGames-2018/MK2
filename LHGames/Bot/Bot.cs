@@ -8,7 +8,7 @@ namespace LHGames.Bot
     {
         internal IPlayer PlayerInfo { get; set; }
         private int _currentDirection = 1;
-
+		int pass = 3;
         internal Bot() { }
 
         /// <summary>
@@ -26,6 +26,19 @@ namespace LHGames.Bot
         /// <param name="map">The gamemap.</param>
         /// <param name="visiblePlayers">Players that are visible to your bot.</param>
         /// <returns>The action you wish to execute.</returns>
+		
+		internal int gotoHouse(){
+			
+			if(pass > 0){
+				pass = pass - 1;
+				return 1;
+				
+			}
+			
+			else{
+				return 0;
+			}
+		}
         internal string ExecuteTurn(Map map, IEnumerable<IPlayer> visiblePlayers)
         {
             // TODO: Implement your AI here.
@@ -38,7 +51,10 @@ namespace LHGames.Bot
 
             var data = StorageHelper.Read<TestClass>("Test");
             Console.WriteLine(data?.Test);
-            return AIHelper.CreateMoveAction(new Point(0, 1));
+			
+			
+            return AIHelper.CreateMoveAction(new Point(gotoHouse(), 0));
+		    //return AIHelper.CreateCollectAction(new Point(0, 1));
         }
 
         /// <summary>
