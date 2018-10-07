@@ -15,6 +15,8 @@ namespace LHGames.Bot
 
         private SearchMap searchMap;
 
+        private Boolean isPassed = false;
+
         internal Bot() { }
 
         /// <summary>
@@ -25,6 +27,11 @@ namespace LHGames.Bot
         {
             PlayerInfo = playerInfo;
             searchMap = new SearchMap(playerInfo, mapAnalyzeds, housePosition);
+
+
+
+
+
         }
 
         /// <summary>
@@ -46,10 +53,15 @@ namespace LHGames.Bot
 
             searchMap.analyseMap(map);
             searchMap.findRessources();
+            if (housePosition == null)
+            {
+                housePosition = searchMap.housePosition;
+            }
 
             var data = StorageHelper.Read<TestClass>("Test");
             // Console.WriteLine(data?.Test);
-            return returnMoveAction(searchMap.findRessources(), PlayerInfo);
+            // return AIHelper.CreateMoveAction(new Point(-1,0));
+            return returnMoveAction(searchMap.findRessources(), PlayerInfo, map);
         }
         public Point calculateTileDistance(List<Point> ressourcePositions, IPlayer playerInfor)
         {
@@ -76,29 +88,50 @@ namespace LHGames.Bot
             else
                 return 0;
         }
-        public string returnMoveAction(List<Point> ressourcePositions, IPlayer playerInfor)
+        public string returnMoveAction(List<Point> ressourcePositions, IPlayer playerInfor, Map map)
         {
-            var distance = calculateTileDistance(ressourcePositions, playerInfor);
-            var houseDistance = calculateHouseDistance(searchMap.housePosition, playerInfor);
-            Console.WriteLine("Capacity: "+playerInfor.CarriedResources);
-            if (playerInfor.CarriedResources == 500)//playerInfor.CarryingCapacity)
+            var houseDistance = calculateHouseDistance(housePosition, playerInfor);
+            Console.WriteLine("Capacity: " + playerInfor.CarriedResources);
+
+            if (ressourcePositions.Count == 0)
             {
-                return moveToHouse(houseDistance, playerInfor);
+                return moveToHouse(houseDistance, playerInfor, map);
             }
-            return moveToRessource(distance, ressourcePositions);
+            var distance = calculateTileDistance(ressourcePositions, playerInfor);
+            if (playerInfor.CarriedResources == 1000)//playerInfor.CarryingCapacity)
+            {
+                isPassed = false;
+                return moveToHouse(houseDistance, playerInfor, map);
+            }
+
+            if (playerInfor.Position.X == searchMap.housePosition.X && playerInfor.Position.Y == searchMap.housePosition.Y && !isPassed)
+            {
+                isPassed = true;
+                return AIHelper.CreateUpgradeAction(UpgradeType.CollectingSpeed);
+            }
+            isPassed = false;
+            return moveToRessource(distance, ressourcePositions, playerInfor, map);
 
         }
 
-        private string moveToRessource(Point distance, List<Point> ressourcePositions)
+        private string moveToRessource(Point distance, List<Point> ressourcePositions, IPlayer playerInfor, Map map)
         {
 
-            
             if (distance.X != 0)
             {
                 if (Math.Abs((int)Point.DistanceSquared(ressourcePositions[0], PlayerInfo.Position)) == 1)
                 {
                     return AIHelper.CreateCollectAction(miningPosition(ressourcePositions[0], PlayerInfo.Position));
                 }
+                if (map.GetTileAt(playerInfor.Position.X - 1, playerInfor.Position.Y) == TileContent.Wall)
+                {
+                    return AIHelper.CreateMeleeAttackAction(new Point(-1, 0));
+                }
+                if (map.GetTileAt(playerInfor.Position.X + 1, playerInfor.Position.Y) == TileContent.Wall)
+                {
+                    return AIHelper.CreateMeleeAttackAction(new Point(1, 0));
+                }
+
                 return distance.X > 0 ? AIHelper.CreateMoveAction(new Point(1, 0)) : AIHelper.CreateMoveAction(new Point(-1, 0));
             }
 
@@ -108,12 +141,20 @@ namespace LHGames.Bot
                 {
                     return AIHelper.CreateCollectAction(miningPosition(ressourcePositions[0], PlayerInfo.Position));
                 }
+                if (map.GetTileAt(playerInfor.Position.X, playerInfor.Position.Y - 1) == TileContent.Wall)
+                {
+                    return AIHelper.CreateMeleeAttackAction(new Point(0, -1));
+                }
+                if (map.GetTileAt(playerInfor.Position.X, playerInfor.Position.Y + 1) == TileContent.Wall)
+                {
+                    return AIHelper.CreateMeleeAttackAction(new Point(0, 1));
+                }
                 return distance.Y > 0 ? AIHelper.CreateMoveAction(new Point(0, 1)) : AIHelper.CreateMoveAction(new Point(0, -1));
             }
             return "";
         }
 
-        private string moveToHouse(Point houseDistance, IPlayer playerInfor)
+        private string moveToHouse(Point houseDistance, IPlayer playerInfor, Map map)
         {
 
             if (houseDistance.X != 0)
@@ -124,6 +165,14 @@ namespace LHGames.Bot
                 //     int number = rand.Next(0,1);
                 //     return AIHelper.CreateMoveAction(new Point(0,randomize()));
                 // }
+                if (map.GetTileAt(playerInfor.Position.X - 1, playerInfor.Position.Y) == TileContent.Wall)
+                {
+                    return AIHelper.CreateMeleeAttackAction(new Point(-1, 0));
+                }
+                if (map.GetTileAt(playerInfor.Position.X + 1, playerInfor.Position.Y) == TileContent.Wall)
+                {
+                    return AIHelper.CreateMeleeAttackAction(new Point(1, 0));
+                }
                 return houseDistance.X > 0 ? AIHelper.CreateMoveAction(new Point(1, 0)) : AIHelper.CreateMoveAction(new Point(-1, 0));
             }
             else if (houseDistance.Y != 0)
@@ -133,7 +182,15 @@ namespace LHGames.Bot
                 //     int number = rand.Next(0,1);
                 //     return AIHelper.CreateMoveAction(new Point(randomize(),0));
 
-                // }                    
+                // }      
+                if (map.GetTileAt(playerInfor.Position.X, playerInfor.Position.Y - 1) == TileContent.Wall)
+                {
+                    return AIHelper.CreateMeleeAttackAction(new Point(0, -1));
+                }
+                if (map.GetTileAt(playerInfor.Position.X, playerInfor.Position.Y + 1) == TileContent.Wall)
+                {
+                    return AIHelper.CreateMeleeAttackAction(new Point(0, 1));
+                }
                 return houseDistance.Y > 0 ? AIHelper.CreateMoveAction(new Point(0, 1)) : AIHelper.CreateMoveAction(new Point(0, -1));
             }
             return AIHelper.CreateMoveAction(new Point(0, 1));

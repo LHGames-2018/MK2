@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using LHGames.Helper;
 using System.Linq;
 
-namespace LHGames.Bot{
+namespace LHGames.Bot
+{
 
-    public class SearchMap{
+    public class SearchMap
+    {
 
         internal IPlayer PlayerInfo;
         public Point housePosition;
-        internal SearchMap(IPlayer playerInfo, MapAnalyzedUnit[,] mapAnalyzeds, Point point){
+        internal SearchMap(IPlayer playerInfo, MapAnalyzedUnit[,] mapAnalyzeds, Point point)
+        {
             this.mapAnalyzeds = mapAnalyzeds;
             housePosition = point;
             this.PlayerInfo = playerInfo;
@@ -17,9 +20,10 @@ namespace LHGames.Bot{
 
         private MapAnalyzedUnit[,] mapAnalyzeds;
 
-    
-        
-        internal void analyseMap(Map map){
+
+
+        internal void analyseMap(Map map)
+        {
 
             //Start Map
             instanciateMap();
@@ -36,12 +40,14 @@ namespace LHGames.Bot{
             int counterX = 0;
             int counterY = 0;
 
-            for(int x = beginArrayX; x < endArrayX; x++){
-                for(int y = beginArrayY; y < endArrayY; y++){
+            for (int x = beginArrayX; x < endArrayX; x++)
+            {
+                for (int y = beginArrayY; y < endArrayY; y++)
+                {
 
-                    mapAnalyzeds[counterX,counterY].positionY = y; 
-                    mapAnalyzeds[counterX,counterY].positionX = x;
-                    mapAnalyzeds[counterX,counterY].tileContent = map.GetTileAt(x,y);
+                    mapAnalyzeds[counterX, counterY].positionY = y;
+                    mapAnalyzeds[counterX, counterY].positionX = x;
+                    mapAnalyzeds[counterX, counterY].tileContent = map.GetTileAt(x, y);
 
                     counterY++;
                     //Console.Write("Position: " + x + ", " + y + " " + map.GetTileAt(x,y) + " ||");
@@ -49,40 +55,51 @@ namespace LHGames.Bot{
                 counterY = 0;
                 counterX++;
             }
-            
+
             //printMap();
 
         }
 
-        internal void instanciateMap(){
-            for(int i = 0; i < 20; i++){
-                for(int j = 0; j < 20; j++){
-                    mapAnalyzeds[i,j] = new MapAnalyzedUnit(); 
+        internal void instanciateMap()
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                for (int j = 0; j < 20; j++)
+                {
+                    mapAnalyzeds[i, j] = new MapAnalyzedUnit();
                 }
             }
         }
 
-        internal void printMap(){
-            for(int i = 0; i < 20; i++){
-                for(int j = 0; j < 20; j++){
+        internal void printMap()
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                for (int j = 0; j < 20; j++)
+                {
                     //Console.Write("Position: " + mapAnalyzeds[i,j].positionX + "," + mapAnalyzeds[i,j].positionY + " " + mapAnalyzeds[i,j].tileContent + "||");
                 }
                 //Console.WriteLine();
             }
         }
-        internal List<Point> findRessources(){
+        internal List<Point> findRessources()
+        {
 
             List<Point> listResources = new List<Point>();
 
-            for(int i = 0; i < 20; i++){
-                for(int j = 0; j < 20; j++){
-                    
-                    if(mapAnalyzeds[i,j].tileContent == TileContent.Resource){
-                        listResources.Add(new Point(mapAnalyzeds[i,j].positionX,mapAnalyzeds[i,j].positionY));
+            for (int i = 0; i < 20; i++)
+            {
+                for (int j = 0; j < 20; j++)
+                {
+
+                    if (mapAnalyzeds[i, j].tileContent == TileContent.Resource)
+                    {
+                        listResources.Add(new Point(mapAnalyzeds[i, j].positionX, mapAnalyzeds[i, j].positionY));
                     }
 
-                    if(mapAnalyzeds[i,j].tileContent == TileContent.House && housePosition == null){
-                        housePosition = new Point(mapAnalyzeds[i,j].positionX,mapAnalyzeds[i,j].positionY);
+                    if (mapAnalyzeds[i, j].tileContent == TileContent.House && housePosition == null)
+                    {
+                        housePosition = new Point(mapAnalyzeds[i, j].positionX, mapAnalyzeds[i, j].positionY);
                     }
                 }
             }
@@ -93,16 +110,21 @@ namespace LHGames.Bot{
             }
             /*/
             //Console.WriteLine("House Position: " + housePosition.X +","+housePosition.Y);
-            listResources = sortResource(listResources);
+            if (listResources.Count != 0)
+            {
+                listResources = sortResource(listResources);
+            }
 
             return listResources;
         }
 
-        internal List<Point> sortResource(List<Point> listResources){
+        internal List<Point> sortResource(List<Point> listResources)
+        {
             List<Point> newListResource = new List<Point>();
 
             double distanceMin = 9999;
-            foreach(Point point in listResources){
+            foreach (Point point in listResources)
+            {
 
                 Point playerInfoPoint = new Point(PlayerInfo.Position.X, PlayerInfo.Position.Y);
 
@@ -111,24 +133,29 @@ namespace LHGames.Bot{
                 //Console.WriteLine("Distance: " + distance + "||" + "For: " + point.X +","+point.Y);
 
                 //Console.WriteLine("Count "+newListResource.Count);
-                if(newListResource.Count == 0){
+                if (newListResource.Count == 0)
+                {
                     newListResource.Add(point);
                 }
                 //Console.WriteLine("Count22 "+newListResource.Count);
 
-                if(distance < distanceMin && newListResource.Count > 0){
+                if (distance < distanceMin && newListResource.Count > 0)
+                {
                     newListResource.Add(point);
                     Swap(newListResource, 0, newListResource.Count - 1);
                     distanceMin = distance;
                 }
             }
+            if (newListResource.Count != 0)
+            {
+                Console.WriteLine("Position: " + newListResource[0].X + "," + newListResource[0].Y);
+            }
 
-            Console.WriteLine("Position: "+newListResource[0].X + "," + newListResource[0].Y);
-            
             return newListResource;
         }
 
-        private void Swap( List<Point> list, int index1, int index2){
+        private void Swap(List<Point> list, int index1, int index2)
+        {
             Point temp = list[index1];
             list[index1] = list[index2];
             list[index2] = temp;
