@@ -98,7 +98,7 @@ namespace LHGames.Bot
                 return moveToHouse(houseDistance, playerInfor, map);
             }
             var distance = calculateTileDistance(ressourcePositions, playerInfor);
-            if (playerInfor.CarriedResources == 1000)//playerInfor.CarryingCapacity)
+            if (playerInfor.CarriedResources == 500)//playerInfor.CarryingCapacity)
             {
                 isPassed = false;
                 return moveToHouse(houseDistance, playerInfor, map);
